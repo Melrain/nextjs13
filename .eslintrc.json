@@ -1,3 +1,7 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": ["next/core-web-vitals", "standard", "plugin:tailwindcss/recommended"],
+  "rules": {
+    "semi": [2, "always"],
+    "space-before-function-paren": ["error", "never"]
+  }
 }
