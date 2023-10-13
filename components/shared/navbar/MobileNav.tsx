@@ -79,7 +79,7 @@ const MobileNav = () => {
               <SheetClose asChild>
                 <Link href={'/sign-in'}>
                   <Button className="small-medium btn-secondary min-h-[41px] w-full rounded-lg px-4 py-3">
-                    <span className="primary-text-gradient">Log in</span>
+                    <span className="primary-text-gradient">Log in </span>
                   </Button>
                 </Link>
               </SheetClose>
