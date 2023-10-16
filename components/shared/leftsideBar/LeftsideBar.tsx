@@ -1,7 +1,8 @@
+'use client';
 import { Button } from '@/components/ui/button';
 import { sidebarLinks } from '@/constants';
 import { SignedIn, SignedOut } from '@clerk/nextjs';
-import { Link } from 'lucide-react';
+import Link from 'next/link';
 import React from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -43,12 +44,12 @@ const LeftsideBar = () => {
               className="flex flex-row items-center gap-2">
               <Image
                 src={'/assets/icons/user.svg'}
-                width={18}
-                height={18}
+                width={22}
+                height={22}
                 alt="Profile"
                 className="invert-colors"
               />
-              <p className="dark:text-white max-lg:hidden">Profile</p>
+              <p className="base-medium  dark:text-white max-lg:hidden">Profile</p>
             </Link>
           </div>
         </SignedIn>
@@ -58,14 +59,28 @@ const LeftsideBar = () => {
               href={'sign-in'}
               className="w-full">
               <Button className="small-medium btn-secondary min-h-[41px] w-full rounded-lg px-4 py-3">
-                <span className="dark:text-white">Log In</span>
+                <Image
+                  src={'/assets/icons/account.svg'}
+                  width={22}
+                  height={22}
+                  className="invert-colors lg:hidden"
+                  alt="account"
+                />
+                <span className="dark:text-white max-lg:hidden">Log In</span>
               </Button>
             </Link>
             <Link
               href={'sign-up'}
               className="w-full">
               <Button className="small-medium light-border-2 btn-tertiary text-dark400_light900 min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
-                <span className="dark:text-white  ">Sign Up</span>
+                <Image
+                  src={'/assets/icons/sign-up.svg'}
+                  width={22}
+                  height={22}
+                  alt="sign-up"
+                  className="invert-colors lg:hidden"
+                />
+                <span className="dark:text-white max-lg:hidden">Sign Up</span>
               </Button>
             </Link>
           </div>
