@@ -30,7 +30,7 @@ const LeftsideBar = () => {
                     width={22}
                     height={22}
                     alt={item.label}
-                    className={'invert-colors'}
+                    className={isActive ? '' : 'invert-colors'}
                   />
                   <p className="base-medium whitespace-nowrap dark:text-white max-lg:hidden">{item.label}</p>
                 </Link>

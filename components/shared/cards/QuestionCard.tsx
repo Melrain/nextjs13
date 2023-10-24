@@ -1,0 +1,91 @@
+import React from 'react';
+import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { EyeIcon, MessageCircleIcon, ThumbsUpIcon } from 'lucide-react';
+
+type cardProps = {
+  _id: number;
+  title: string;
+  tags: { _id: string; name: string }[];
+  author: { _id: string; name: string; picture: string };
+  upvotes: number;
+  views: number;
+  answers: Array<object>;
+  createAt: Date;
+};
+
+const getHourDiff = (date: Date) => {
+  const currentLocalTime = new Date();
+  const dateLocalTime = new Date(date);
+  const diffInMilliseconds = currentLocalTime.getTime() - dateLocalTime.getTime();
+  const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
+
+  if (diffInHours >= 24) {
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `${diffInDays} day`;
+  }
+
+  return `${diffInHours} hours`;
+};
+
+const QuestionCard = (props: cardProps) => {
+  return (
+    <Card className="card-wrapper flex flex-col border-none p-8">
+      <CardTitle>
+        <Link
+          href={'/'}
+          className="sm:h3-semibold text-dark200_light900 base-semibold line-clamp-1 flex-1">
+          <h3>{props.title}</h3>
+        </Link>
+      </CardTitle>
+      <CardContent className="p-0">
+        <Link
+          href={'/'}
+          className="mt-3 flex flex-row gap-2">
+          {props.tags.map((tag) => (
+            <Button
+              className="body-medium rounded-lg border-transparent bg-slate-100 px-5 py-2 text-xs capitalize text-light-500 shadow dark:bg-dark-300 dark:hover:bg-slate-900/80"
+              key={tag._id}>
+              {tag.name}
+            </Button>
+          ))}
+        </Link>
+      </CardContent>
+      <CardFooter className="mt-6 flex flex-col items-start justify-between gap-3  p-0 max-sm:flex-row lg:flex-row">
+        <div className="text-dark300_light900 flex flex-row items-center gap-2">
+          <Image
+            src={props.author.picture}
+            width={15}
+            height={15}
+            alt={props.author.name}
+          />
+          <p className="body-medium">{props.author.name}</p>
+          <span className="text-xs max-sm:hidden">• asked {getHourDiff(props.createAt)} ago</span>
+        </div>
+        <div className="text-dark300_light900 flex flex-row gap-2">
+          <ThumbsUpIcon
+            size={14}
+            color="grey"
+          />
+          <p className="text-xs">{props.upvotes} Votes</p>
+          <MessageCircleIcon
+            size={14}
+            color="grey"
+            className="ml-2"
+          />
+          <p className="text-xs">{props.answers.length} Answers</p>
+          <EyeIcon
+            className="ml-2"
+            size={14}
+            color="grey"
+          />
+          <p className="text-xs">{props.views} Views</p>
+        </div>
+      </CardFooter>
+    </Card>
+  );
+};
+
+export default QuestionCard;

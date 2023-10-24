@@ -2,14 +2,14 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import React from 'react';
 
-type propsType = {
+type TagType = {
   _id: number;
   name: string;
   totalQuestions?: number;
   showCount?: boolean;
 };
 
-const Rendertag = (tagType: propsType) => {
+const Rendertag = (tagType: TagType) => {
   return (
     <div>
       <Link
