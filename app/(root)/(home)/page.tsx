@@ -5,45 +5,13 @@ import Filter from '@/components/shared/Filter';
 import HomeFilters from '@/components/home/HomeFilters';
 import NoResult from '@/components/shared/NoResult';
 import QuestionCard from '@/components/shared/cards/QuestionCard';
+import { getQuestions } from '@/lib/actions/question.action';
 
-const questions = [
-  {
-    _id: 1,
-    title: 'Best practices for data fetching in a Next.js application with Server-Side Rendering (SSR)?',
-    tags: [
-      { _id: '1', name: 'python' },
-      { _id: '2', name: 'sql' }
-    ],
-    author: {
-      _id: '123',
-      name: 'John Doe',
-      picture: '/profile.jpg'
-    },
-    upvotes: 10,
-    views: 100,
-    answers: [],
-    createdAt: new Date('2023-10-20T00:00:00.000Z')
-  },
-  {
-    _id: 2,
-    title: 'How to change the style?',
-    tags: [
-      { _id: '3', name: 'css' },
-      { _id: '4', name: 'html' }
-    ],
-    author: {
-      _id: '456',
-      name: 'Jane Smith',
-      picture: '/avatar.jpg'
-    },
-    upvotes: 8,
-    views: 120,
-    answers: [],
-    createdAt: new Date('2021-09-02T00:00:00.000Z')
-  }
-];
+export default async function Home() {
+  // Get all questions from db;
 
-export default function Home() {
+  const result = await getQuestions({});
+
   const filters = [
     { name: 'newest', value: 'Newest' },
     { name: 'recommended', value: 'Recommended' },
@@ -76,8 +44,8 @@ export default function Home() {
       </div>
       <HomeFilters />
       <div className="mt-10 flex w-full flex-col gap-6">
-        {questions.length > 0 ? (
-          questions.map((question) => (
+        {result && result.questions.length > 0 ? (
+          result.questions.map((question) => (
             <QuestionCard
               key={question._id}
               _id={question._id}
@@ -87,7 +55,7 @@ export default function Home() {
               upvotes={question.upvotes}
               views={question.views}
               answers={question.answers}
-              createAt={question.createdAt}
+              createdAt={question.createdAt}
             />
           ))
         ) : (

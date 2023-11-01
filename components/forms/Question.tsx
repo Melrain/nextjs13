@@ -11,10 +11,19 @@ import { QuestionsSchema } from '@/lib/validations';
 import { Editor } from '@tinymce/tinymce-react';
 import { Badge } from '../ui/badge';
 import Image from 'next/image';
+import { createQuestion } from '@/lib/actions/question.action';
+
+import { usePathname, useRouter } from 'next/navigation';
 
 const type: any = 'create';
 
-const Question = () => {
+interface Props {
+  mongoUserId: string;
+}
+
+const Question = ({ mongoUserId }: Props) => {
+  const router = useRouter();
+  const pathname = usePathname();
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -29,14 +38,23 @@ const Question = () => {
   });
 
   // 2. Define a submit handler.
-  const onSubmit = (values: z.infer<typeof QuestionsSchema>) => {
+  const onSubmit = async (values: z.infer<typeof QuestionsSchema>) => {
     // Do something with the form values
     // This will be type-safe and validated
+    console.log('clicked');
     setIsSubmitting(true);
     try {
       // make an async call to your API -> create a question
       // contain all form data
       // navigate to home page
+      await createQuestion({
+        title: values.title,
+        content: values.explanation,
+        tags: values.tags,
+        author: JSON.parse(mongoUserId),
+        path: pathname
+      });
+      router.push('/');
     } catch (error) {
       console.error(error);
     } finally {
@@ -102,7 +120,7 @@ const Question = () => {
         {/* Explanation field */}
         <FormField
           control={form.control}
-          name="title"
+          name="explanation"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col">
               <FormLabel className="paragraph-semibold text-dark400_light800">
@@ -115,7 +133,9 @@ const Question = () => {
                     // @ts-ignore
                     (editorRef.current = editor)
                   }
-                  initialValue="<p>This is the initial content of the editor.</p>"
+                  onBlur={field.onBlur}
+                  onEditorChange={(content) => field.onChange(content)}
+                  initialValue=""
                   init={{
                     height: 500,
                     menubar: false,
@@ -203,11 +223,10 @@ const Question = () => {
           className="primary-gradient w-fit !text-light-900"
           disabled={isSubmitting}>
           {isSubmitting ? (
-            <>{type === 'edit' ? 'editing...' : 'posting'}</>
+            <>{type === 'edit' ? 'editing...' : 'posting...'}</>
           ) : (
             <>{type === 'edit' ? 'Edit Question' : 'Ask a Question'}</>
           )}
-          Submit
         </Button>
       </form>
     </FormProvider>
