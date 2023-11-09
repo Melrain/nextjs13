@@ -1,7 +1,7 @@
 'use server';
 
 import { connectToDatabase } from '../mongoose';
-import User, { IUser } from '@/database/user.model';
+import User from '@/database/user.model';
 import { CreateUserParams, DeleteUserParams, UpdateUserParams } from './shared.types';
 import { revalidatePath } from 'next/cache';
 import Question from '@/database/question.model';
@@ -62,6 +62,7 @@ export async function deleteUser(params: DeleteUserParams) {
 
     // get user question ids here
     const userQuestionIds = await Question.find({ author: user._id }).distinct('_id');
+    console.log(userQuestionIds);
   } catch (error) {
     console.error(error);
     throw error;
