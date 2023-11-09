@@ -86,6 +86,7 @@ export async function POST(req: Request) {
     });
   }
 
+  // TODO - delete user in your database
   if (eventType === 'user.deleted') {
     const { id } = evt.data;
     const deletedUser = await deleteUser({ clerkId: id! });
