@@ -2,6 +2,9 @@
   "extends": ["next/core-web-vitals", "standard", "plugin:tailwindcss/recommended"],
   "rules": {
     "semi": [2, "always"],
-    "space-before-function-paren": ["error", "never"]
+    "space-before-function-paren": ["off", "2"],
+    "multiline-ternary": "off",
+    "indent": ["off", 2],
+    "camelcase": "off"
   }
 }
