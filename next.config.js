@@ -6,7 +6,8 @@ const nextConfig = {
     serverComponentsExternalPackages: ['mongoose']
   },
   images: {
-    domains: ['example.com']
+    domains: ['example.com'],
+    remotePatterns: [{ protocol: 'https', hostname: '*' }]
   }
 };
 
