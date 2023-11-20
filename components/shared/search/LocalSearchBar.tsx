@@ -14,7 +14,7 @@ type localSearchBarType = {
 const LocalSearchBar = (props: localSearchBarType) => {
   return (
     <div
-      className={`background-light800_dark300 relative flex min-h-[56] w-full grow items-center gap-1 rounded-[10px] px-4 py-3 ${props.otherClasses}`}>
+      className={`background-light800_dark300 relative flex min-h-[56px] w-full grow items-center gap-1 rounded-[10px] px-4 py-3 ${props.otherClasses}`}>
       {props.iconPosition === 'left' && (
         <Image
           src={props.imgSrc}

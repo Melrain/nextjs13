@@ -1,16 +1,29 @@
 'use server';
 
 import { connectToDatabase } from '../mongoose';
-import console from 'console';
 import Question from '@/database/question.model';
 import Tag from '@/database/tag.model';
-import { CreateQuestionParams, GetQuestionsParams } from './shared.types';
+import { CreateQuestionParams, GetQuestionsByIdParams, GetQuestionsParams } from './shared.types';
 import User from '@/database/user.model';
 import { revalidatePath } from 'next/cache';
 
+export async function getQuestionById(params: GetQuestionsByIdParams) {
+  try {
+    await connectToDatabase();
+    const { questionId } = params;
+    const question = await Question.findById(questionId)
+      .populate({ path: 'tags', model: Tag, select: '_id name' })
+      .populate({ path: 'author', model: User, select: '_id name picture' });
+    return question;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function getQuestions(params: GetQuestionsParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
     const questions = await Question.find({})
       .populate({ path: 'tags', model: Tag })
       .populate({ path: 'author', model: User })

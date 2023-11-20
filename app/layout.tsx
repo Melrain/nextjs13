@@ -1,4 +1,5 @@
 import './globals.css';
+import '../styles//prism.css';
 import type { Metadata } from 'next';
 // eslint-disable-next-line camelcase
 import { Inter, Space_Grotesk } from 'next/font/google';

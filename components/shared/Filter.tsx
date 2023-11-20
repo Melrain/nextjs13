@@ -25,7 +25,7 @@ const Filter = (FilterProps: FilterType) => {
             {FilterProps.filters.map((item) => {
               return (
                 <SelectItem
-                  className="body-regular text-dark500_light700"
+                  className="body-regular text-dark500_light700 hover:background-light700_dark400"
                   key={item.value}
                   value={item.value}>
                   {item.name}

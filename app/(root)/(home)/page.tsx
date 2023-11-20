@@ -6,18 +6,12 @@ import HomeFilters from '@/components/home/HomeFilters';
 import NoResult from '@/components/shared/NoResult';
 import QuestionCard from '@/components/shared/cards/QuestionCard';
 import { getQuestions } from '@/lib/actions/question.action';
+import { HomePageFilters } from '@/constants/filters';
 
 export default async function Home() {
   // Get all questions from db;
-
   const result = await getQuestions({});
 
-  const filters = [
-    { name: 'newest', value: 'Newest' },
-    { name: 'recommended', value: 'Recommended' },
-    { name: 'frequent', value: 'Frequent' },
-    { name: 'unanswered', value: 'Unanswered' }
-  ];
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -37,7 +31,7 @@ export default async function Home() {
           otherClasses="flex-1"
         />
         <Filter
-          filters={filters}
+          filters={HomePageFilters}
           otherClasses="min-h-[56px] sm:min-w-[170px]"
           containerClasses="hidden max-sm:w-full max-md:flex"
         />

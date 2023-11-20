@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { EyeIcon, MessageCircleIcon, ThumbsUpIcon } from 'lucide-react';
+import { getTimestamp } from '@/lib/utils';
 
 interface QuestionProps {
   _id: string;
@@ -23,32 +24,12 @@ interface QuestionProps {
   createdAt: Date;
 }
 
-const getHourDiff = (date: Date) => {
-  const currentLocalTime = new Date();
-  const dateLocalTime = new Date(date);
-  const diffInMilliseconds = currentLocalTime.getTime() - dateLocalTime.getTime();
-  const diffInSeconds = Math.floor(diffInMilliseconds / 1000);
-
-  if (diffInSeconds >= 24 * 60 * 60) {
-    const diffInDays = Math.floor(diffInSeconds / (24 * 60 * 60));
-    return `${diffInDays} day`;
-  } else if (diffInSeconds >= 60 * 60) {
-    const diffInHours = Math.floor(diffInSeconds / (60 * 60));
-    return `${diffInHours} hours`;
-  } else if (diffInSeconds >= 60) {
-    const diffInMinutes = Math.floor(diffInSeconds / 60);
-    return `${diffInMinutes} minutes`;
-  }
-
-  return `${diffInSeconds} seconds`;
-};
-
 const QuestionCard = ({ _id, title, tags, author, upvotes, views, answers, createdAt }: QuestionProps) => {
   return (
     <Card className="card-wrapper flex flex-col border-none p-8">
       <CardTitle>
         <Link
-          href={'/'}
+          href={`/question/${_id}`}
           className="sm:h3-semibold text-dark200_light900 base-semibold line-clamp-1 flex-1">
           <h3>{title}</h3>
         </Link>
@@ -75,7 +56,7 @@ const QuestionCard = ({ _id, title, tags, author, upvotes, views, answers, creat
             alt={author.name}
           />
           <p className="body-medium">{author.name}</p>
-          <span className="text-xs max-sm:hidden">• asked {getHourDiff(createdAt)} ago</span>
+          <span className="text-xs max-sm:hidden">• asked {getTimestamp(createdAt)}</span>
         </div>
         <div className="text-dark300_light900 flex flex-row gap-2">
           <ThumbsUpIcon
