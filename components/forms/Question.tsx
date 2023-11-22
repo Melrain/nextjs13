@@ -165,6 +165,7 @@ const Question = ({ mongoUserId }: Props) => {
                       'removeformat | help',
                     content_style: 'body { font-family:Inter; font-size:16px }',
                     skin: mode === 'dark' ? 'oxide-dark' : 'oxide',
+
                     content_css: mode === 'dark' ? 'dark' : 'light'
                   }}
                 />

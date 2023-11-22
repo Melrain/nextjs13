@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTheme } from '@/context/ThemeProvider';
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from '@/components/ui/menubar';
 import Image from 'next/image';
@@ -6,6 +5,7 @@ import { themes } from '@/constants';
 
 const Theme = () => {
   const { mode, setMode } = useTheme();
+
   return (
     <Menubar className=" relative border-none bg-transparent shadow-none">
       <MenubarMenu>

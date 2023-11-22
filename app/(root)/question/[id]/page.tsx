@@ -2,7 +2,9 @@ import Answer from '@/components/forms/Answer';
 import ParseHtml from '@/components/shared/ParseHtml';
 import Rendertag from '@/components/shared/rightsideBar/Rendertag';
 import { getQuestionById } from '@/lib/actions/question.action';
+import { getUserById } from '@/lib/actions/user.action';
 import { getTimestamp } from '@/lib/utils';
+import { auth } from '@clerk/nextjs';
 import { ArrowBigDown, ArrowBigUp, Clock, Eye, MessageCircleIcon, Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -11,14 +13,19 @@ interface PageUrlProps {
   params: {
     id: string;
   };
+  searchParams: string;
 }
 
-const page = async ({ params }: PageUrlProps) => {
-  const { id } = params;
+const page = async ({ params, searchParams }: PageUrlProps) => {
+  const result = await getQuestionById({ questionId: params.id });
+  const { userId: clerkId } = auth();
 
-  const result = await getQuestionById({ questionId: id });
+  let mongoUser;
 
-  console.log(result);
+  if (clerkId) {
+    mongoUser = await getUserById({ userId: clerkId });
+    console.log(mongoUser);
+  }
 
   return (
     <>
@@ -82,7 +89,11 @@ const page = async ({ params }: PageUrlProps) => {
           ))}
         </div>
         <div>
-          <Answer />
+          <Answer
+            question={result.content}
+            questionId={JSON.stringify(result._id)}
+            authorId={JSON.stringify(mongoUser._id)}
+          />
         </div>
       </div>
     </>

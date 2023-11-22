@@ -11,13 +11,22 @@ import { Stars } from 'lucide-react';
 import { Editor } from '@tinymce/tinymce-react';
 import { useTheme } from '@/context/ThemeProvider';
 
-const type: any = 'create';
+import { createAnswer } from '@/lib/actions/answer.action';
+import { usePathname } from 'next/navigation';
 
-const Answer = () => {
+const type: any = 'post';
+
+interface AnswerProps {
+  question: string;
+  questionId: string;
+  authorId: string;
+}
+
+const Answer = ({ question, questionId, authorId }: AnswerProps) => {
   const { mode } = useTheme();
-  console.log(mode);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const editorRef = useRef(null);
+  const pathname = usePathname();
 
   const form = useForm<z.infer<typeof AnswerSchema>>({
     resolver: zodResolver(AnswerSchema),
@@ -26,17 +35,37 @@ const Answer = () => {
     }
   });
 
-  const onSubmit = async (values: z.infer<typeof AnswerSchema>) => {
-    console.log('post answer clicked');
+  const handleCeateAnswer = async (values: z.infer<typeof AnswerSchema>) => {
     setIsSubmitting(true);
+
+    try {
+      await createAnswer({
+        content: values.answer,
+        author: JSON.parse(authorId),
+        question: JSON.parse(questionId),
+        path: pathname
+      });
+
+      form.reset();
+
+      if (editorRef.current) {
+        const editor = editorRef.current as any;
+
+        editor.setContent('');
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(handleCeateAnswer)}>
         <FormField
           control={form.control}
-          name="answer"
+          name="lable"
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between">
               <FormLabel className="text-dark300_light700 font-bold">Write your answer here</FormLabel>
