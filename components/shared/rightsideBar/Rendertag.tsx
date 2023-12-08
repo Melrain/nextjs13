@@ -7,6 +7,7 @@ type TagType = {
   name: string;
   totalQuestions?: number;
   showCount?: boolean;
+  otherClass?: string;
 };
 
 const Rendertag = (tagType: TagType) => {
