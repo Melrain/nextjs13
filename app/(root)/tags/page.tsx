@@ -11,7 +11,6 @@ import Link from 'next/link';
 
 const page = async () => {
   const result = await getAllTags({});
-  console.log(result);
 
   return (
     <section className="flex w-full flex-col flex-wrap">

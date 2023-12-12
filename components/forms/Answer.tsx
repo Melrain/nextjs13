@@ -37,7 +37,7 @@ const Answer = ({ question, questionId, authorId }: AnswerProps) => {
 
   const handleCeateAnswer = async (values: z.infer<typeof AnswerSchema>) => {
     setIsSubmitting(true);
-
+    console.log('answer button clicked');
     try {
       await createAnswer({
         content: values.answer,
@@ -63,18 +63,13 @@ const Answer = ({ question, questionId, authorId }: AnswerProps) => {
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(handleCeateAnswer)}>
-        <FormField
-          control={form.control}
-          name="lable"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between">
-              <FormLabel className="text-dark300_light700 font-bold">Write your answer here</FormLabel>
-              <Button className="light-border-2 gap-2 rounded-lg bg-slate-100  text-primary-500 dark:bg-slate-900">
-                <Stars className="w-[15px]" /> Generate AI answer
-              </Button>
-            </FormItem>
-          )}
-        />
+        <FormItem className="flex flex-row items-center justify-between">
+          <FormLabel className="text-dark300_light700 font-bold">Write your answer here</FormLabel>
+          <Button className="light-border-2 gap-2 rounded-lg bg-slate-100  text-primary-500 dark:bg-slate-900">
+            <Stars className="w-[15px]" /> Generate AI answer
+          </Button>
+        </FormItem>
+
         <FormField
           control={form.control}
           name="answer"

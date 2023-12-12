@@ -20,7 +20,7 @@ export async function viewQuestion(params: VieqQuestionParams) {
     // create new interaction
     await Interaction.create({ user: userId, action: 'view', question: questionId });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 }

@@ -60,3 +60,37 @@ export interface CreateAnswerParams {
   question: Schema.Types.ObjectId;
   path: string;
 }
+
+export interface QuestionVoteParams {
+  userId: string;
+  questionId: string;
+  hasupVoted: boolean;
+  hasdownVoted: boolean;
+  path: string;
+}
+
+export interface AnswerVoteParams {
+  userId: string;
+  answerId: string;
+  hasupVoted: boolean;
+  hasdownVoted: boolean;
+  path: string;
+}
+
+export interface GetAnswersParams {
+  questionId: string;
+  sortBy?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface ToggleSavedQuestionParams {
+  userId: string;
+  questionId: string;
+  path: string;
+}
+
+export interface VieqQuestionParams {
+  questionId: string;
+  userId: string | undefined;
+}

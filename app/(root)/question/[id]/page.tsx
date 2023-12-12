@@ -1,6 +1,10 @@
 import Answer from '@/components/forms/Answer';
+import AllAnswers from '@/components/shared/AllAnswers';
+
 import ParseHtml from '@/components/shared/ParseHtml';
+import Votes from '@/components/shared/Votes';
 import Rendertag from '@/components/shared/rightsideBar/Rendertag';
+import { getAllAnswers } from '@/lib/actions/answer.action';
 import { getQuestionById } from '@/lib/actions/question.action';
 import { getUserById } from '@/lib/actions/user.action';
 import { getTimestamp } from '@/lib/utils';
@@ -17,14 +21,15 @@ interface PageUrlProps {
 }
 
 const page = async ({ params, searchParams }: PageUrlProps) => {
-  const result = await getQuestionById({ questionId: params.id });
+  const { id } = params;
+  const result = await getQuestionById({ questionId: id });
+  console.log('result:' + result);
   const { userId: clerkId } = auth();
 
   let mongoUser;
 
   if (clerkId) {
     mongoUser = await getUserById({ userId: clerkId });
-    console.log(mongoUser);
   }
 
   return (
@@ -43,13 +48,16 @@ const page = async ({ params, searchParams }: PageUrlProps) => {
             </Link>
             <p className="text-dark300_light900 font-semibold">{result.author.name}</p>
           </div>
-          <div className="flex flex-row items-center gap-2">
-            <ArrowBigUp className="cursor-pointer text-gray-500" />
-            <p className="background-light700_dark400 min-w-[18px] text-center text-xs">{result.upvotes.length}</p>
-            <ArrowBigDown className="cursor-pointer text-gray-500" />
-            <p className="background-light700_dark400 min-w-[18px] text-center text-xs">{result.downvotes.length}</p>
-            <Star className="ml-2 cursor-pointer text-yellow-500" />
-          </div>
+          <Votes
+            type="Question"
+            itemId={JSON.stringify(result._id)}
+            userId={JSON.stringify(mongoUser._id)}
+            upvotes={result.upvotes.length}
+            downvotes={result.downvotes.length}
+            hasupVoted={result.upvotes.includes(mongoUser._id)}
+            hasdownVoted={result.downvotes.includes(mongoUser._id)}
+            hasSaved={mongoUser.saved.includes(result._id)}
+          />
         </div>
         <h1 className="h1-bold mt-2">{result.title}</h1>
         <div className="mt-4 flex flex-row items-center gap-6 text-xs">
@@ -75,7 +83,7 @@ const page = async ({ params, searchParams }: PageUrlProps) => {
             </p>
           </div>
         </div>
-        <div className="mt-10">
+        <div className="mt-10 text-dark300_light900">
           <ParseHtml data={result.content} />
         </div>
         <div className="mt-12 flex flex-row flex-wrap gap-2">
@@ -88,6 +96,12 @@ const page = async ({ params, searchParams }: PageUrlProps) => {
             />
           ))}
         </div>
+        {/* Render the answers */}
+        <AllAnswers
+          questionId={result._id}
+          userId={mongoUser._id}
+          totalAnswers={result.answers.length}
+        />
         <div>
           <Answer
             question={result.content}

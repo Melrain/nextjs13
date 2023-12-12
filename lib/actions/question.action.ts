@@ -3,7 +3,7 @@
 import { connectToDatabase } from '../mongoose';
 import Question from '@/database/question.model';
 import Tag from '@/database/tag.model';
-import { CreateQuestionParams, GetQuestionsByIdParams, GetQuestionsParams } from './shared.types';
+import { CreateQuestionParams, GetQuestionsByIdParams, GetQuestionsParams, QuestionVoteParams } from './shared.types';
 import User from '@/database/user.model';
 import { revalidatePath } from 'next/cache';
 
@@ -72,3 +72,51 @@ export async function createQuestion(params: CreateQuestionParams) {
     console.error(error);
   }
 }
+
+export const downvoteQuestion = async (params: QuestionVoteParams) => {
+  try {
+    await connectToDatabase();
+    const { questionId, userId, hasdownVoted, hasupVoted, path } = params;
+    let updateQuery = {};
+    if (hasdownVoted) {
+      updateQuery = { $pull: { downvotes: userId } };
+    } else if (hasupVoted) {
+      updateQuery = { $pull: { upvotes: userId }, $push: { downvotes: userId } };
+    } else {
+      updateQuery = { $push: { downvotes: userId } };
+    }
+    const question = await Question.findOneAndUpdate({ _id: questionId }, updateQuery, { new: true });
+
+    if (!question) {
+      throw new Error('Question not found');
+    }
+    revalidatePath(path);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const upvoteQuestion = async (params: QuestionVoteParams) => {
+  try {
+    await connectToDatabase();
+    const { questionId, userId, hasdownVoted, hasupVoted, path } = params;
+    let updateQuery = {};
+    if (hasupVoted) {
+      updateQuery = { $pull: { upvotes: userId } };
+    } else if (hasdownVoted) {
+      updateQuery = { $pull: { downvotes: userId }, $push: { upvotes: userId } };
+    } else {
+      updateQuery = { $push: { upvotes: userId } };
+    }
+    const question = await Question.findOneAndUpdate({ _id: questionId }, updateQuery, { new: true });
+
+    if (!question) {
+      throw new Error('Question not found');
+    }
+    revalidatePath(path);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

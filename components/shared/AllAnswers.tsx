@@ -1,11 +1,11 @@
-import { getAnswersByQuestionId } from '@/lib/actions/answer.action';
+import { getAllAnswers } from '@/lib/actions/answer.action';
 import React from 'react';
 import ParseHtml from './ParseHtml';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getTimestamp } from '@/lib/utils';
 import Filter from './Filter';
-import { AnswersFilter } from '@/constants/filters';
+import { AnswerFilters } from '@/constants/filters';
 import Votes from './Votes';
 import { getUserById } from '@/lib/actions/user.action';
 
@@ -17,14 +17,16 @@ interface AnswerProps {
   filter?: number;
 }
 const AllAnswers = async ({ questionId, userId, totalAnswers, page, filter }: AnswerProps) => {
-  const { answers } = await getAnswersByQuestionId({ questionId });
-  const user = await getUserById({ userId });
+  const answers = await getAllAnswers({ questionId });
+  console.log('answers:' + answers);
+  console.log(answers[0].downvotes.includes(userId));
+
   return (
     <div>
       <div className="mt-12 flex flex-row items-center justify-between">
         <p className=" text-dark400_light800 text-primary-500">{totalAnswers} Answers</p>
         <div>
-          <Filter filters={AnswersFilter} />
+          <Filter filters={AnswerFilters} />
         </div>
       </div>
       {answers.map((answer) => (
@@ -60,10 +62,9 @@ const AllAnswers = async ({ questionId, userId, totalAnswers, page, filter }: An
               hasupVoted={answer.upvotes.includes(userId)}
               downvotes={answer.downvotes.length}
               hasdownVoted={answer.downvotes.includes(userId)}
-              hasSaved={user?.saved.includes(answer._id)}
             />
           </div>
-          <div className="mt-4">
+          <div className="mt-4 text-dark300_light900">
             <ParseHtml data={answer.content} />
           </div>
           <hr className="mt-20" />

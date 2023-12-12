@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { downvoteQuestion, upvoteQuestion } from '@/lib/actions/question.action';
 import { usePathname, useRouter } from 'next/navigation';
 import { downvoteAnswer, upvoteAnswer } from '@/lib/actions/answer.action';
-import { toggleSaveQuestion } from '@/lib/actions/user.action';
+import { toggleSavedQuestion } from '@/lib/actions/user.action';
 import { viewQuestion } from '@/lib/actions/interaction.action';
 
 interface Props {
@@ -17,12 +17,12 @@ interface Props {
   downvotes: number;
   hasupVoted: boolean;
   hasdownVoted: boolean;
-  hasSaved: boolean;
+  hasSaved?: boolean;
 }
 
 const Votes = ({ type, itemId, userId, upvotes, downvotes, hasupVoted, hasdownVoted, hasSaved }: Props) => {
   const handleSave = async () => {
-    await toggleSaveQuestion({
+    await toggleSavedQuestion({
       questionId: JSON.parse(itemId),
       userId: JSON.parse(userId),
       path
@@ -35,6 +35,7 @@ const Votes = ({ type, itemId, userId, upvotes, downvotes, hasupVoted, hasdownVo
     if (!userId) {
       return;
     }
+
     if (action === 'upvote') {
       if (type === 'Question') {
         await upvoteQuestion({
@@ -42,45 +43,52 @@ const Votes = ({ type, itemId, userId, upvotes, downvotes, hasupVoted, hasdownVo
           userId: JSON.parse(userId),
           hasupVoted,
           hasdownVoted,
-          path
+          path: path
         });
       } else if (type === 'Answer') {
-        // TODO: upvote answer
         await upvoteAnswer({
           answerId: JSON.parse(itemId),
           userId: JSON.parse(userId),
           hasupVoted,
           hasdownVoted,
-          path
+          path: path
         });
       }
-    } else if (action === 'downvote') {
+
+      // todo: show a toast
+      return;
+    }
+
+    if (action === 'downvote') {
       if (type === 'Question') {
         await downvoteQuestion({
           questionId: JSON.parse(itemId),
           userId: JSON.parse(userId),
           hasupVoted,
           hasdownVoted,
-          path
+          path: path
         });
       } else if (type === 'Answer') {
-        // TODO: downvote
         await downvoteAnswer({
           answerId: JSON.parse(itemId),
           userId: JSON.parse(userId),
           hasupVoted,
           hasdownVoted,
-          path
+          path: path
         });
       }
+
+      // todo: show a toast
     }
   };
 
   useEffect(() => {
-    viewQuestion({
-      questionId: JSON.parse(itemId),
-      userId: userId ? JSON.parse(userId) : undefined
-    });
+    if (itemId && userId && path && router) {
+      viewQuestion({
+        questionId: JSON.parse(itemId),
+        userId: JSON.parse(userId)
+      });
+    }
   }, [itemId, userId, path, router]);
 
   return (
@@ -107,16 +115,21 @@ const Votes = ({ type, itemId, userId, upvotes, downvotes, hasupVoted, hasdownVo
         </div>
 
         <p className="background-light700_dark400 min-w-[18px] text-center text-xs">{downvotes}</p>
-        <Image
-          alt="star"
-          width={18}
-          height={18}
-          src={`/assets/icons/${hasSaved ? 'star-filled.svg' : 'star-red.svg'}`}
-          className="ml-2 cursor-pointer"
-          onClick={() => {
-            handleSave();
-          }}
-        />
+        {type === 'Answer' ? (
+          ''
+        ) : (
+          <Image
+            alt="star"
+            width={18}
+            height={18}
+            src={`/assets/icons/${hasSaved ? 'star-filled.svg' : 'star-red.svg'}`}
+            className="ml-2 cursor-pointer"
+            onClick={() => {
+              console.log('saved button clicked');
+              handleSave();
+            }}
+          />
+        )}
       </div>
     </div>
   );

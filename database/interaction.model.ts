@@ -21,6 +21,6 @@ const IInteractionSchema = new mongoose.Schema<IInteraction>({
 });
 
 // check if model exists;if not create it
-const Interaction = mongoose.models.ViewQuestion || mongoose.model('Interaction', IInteractionSchema);
+const Interaction = mongoose.models.Interaction || mongoose.model('Interaction', IInteractionSchema);
 
 export default Interaction;
