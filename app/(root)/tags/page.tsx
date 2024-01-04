@@ -3,21 +3,24 @@ import { TagsPageFilters } from '@/constants/filters';
 import Filter from '@/components/shared/Filter';
 import React from 'react';
 import { getAllTags } from '@/lib/actions/tag.action';
-import TagCard from '@/components/shared/cards/TagCard';
 import NoResult from '@/components/shared/NoResult';
-import Rendertag from '@/components/shared/rightsideBar/Rendertag';
-import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import { SearchParamsProps } from '@/types';
+import PaginationPage from '@/components/shared/PaginationPage';
 
-const page = async () => {
-  const result = await getAllTags({});
+const page = async ({ searchParams }: SearchParamsProps) => {
+  const result = await getAllTags({
+    searchQuery: searchParams.q,
+    filter: searchParams.filter,
+    page: searchParams.page ? +searchParams.page : 1
+  });
 
   return (
     <section className="flex w-full flex-col flex-wrap">
       <h1 className="h1-bold text-dark300_light900">Tags</h1>
       <div className="mt-4 flex flex-row items-center justify-between gap-5 max-sm:flex-col">
         <LocalSearchBar
-          route="/community"
+          route="/tags"
           iconPosition="left"
           imgSrc="/assets/icons/search.svg"
           placeholder="Search amazing minds here..."
@@ -35,11 +38,11 @@ const page = async () => {
             <Link
               key={tag._id}
               href={`/tags/${tag._id}`}>
-              <div className="flex flex-col w-[260px] p-5 rounded-lg background-light900_dark200 border-2 shadow-lg">
-                <h2 className="h2-bold text-lg w-fit rounded-md p-2 text-dark500_light700 background-light800_dark300">
+              <div className="background-light900_dark200 flex w-[260px] flex-col rounded-lg border-2 p-5 shadow-lg">
+                <h2 className="h2-bold text-dark500_light700 background-light800_dark300 w-fit rounded-md p-2 text-lg">
                   {tag.name}
                 </h2>
-                <p className="text-regular text-sm text-dark500_light700">
+                <p className="text-dark500_light700 text-sm">
                   JavaScript, often abbreviated as JS, is a programming language that is one of the core technologies of
                   the World Wide Web, alongside HTML and CSS
                 </p>
@@ -58,6 +61,10 @@ const page = async () => {
           />
         )}
       </div>
+      <PaginationPage
+        pageNumber={searchParams?.page ? +searchParams.page : 1}
+        isNext={result.isNext}
+      />
     </section>
   );
 };

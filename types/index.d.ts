@@ -14,3 +14,12 @@ export interface GetAllUsersParams {
 export interface TagType {
   name: string;
 }
+
+export interface URLProps {
+  params: { id: string };
+  searchParams: { [key: string]: string | undefined };
+}
+
+export interface SearchParamsProps {
+  searchParams: { [key: string]: string | undefined };
+}

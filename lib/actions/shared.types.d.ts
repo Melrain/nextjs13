@@ -10,10 +10,21 @@ export interface GetQuestionsParams {
 
 export interface GetUserByIdParams {
   userId: string;
+  searchQuery?: string;
 }
 
 export interface GetQuestionsByIdParams {
+  page?: number;
+  pageSize?: number;
   questionId: string;
+}
+
+export interface GetSavedQuestionParams {
+  page?: number;
+  pageSize?: number;
+  clerkId: string;
+  searchQuery?: string;
+  filter?: string;
 }
 
 export interface CreateQuestionParams {
@@ -21,6 +32,13 @@ export interface CreateQuestionParams {
   content: string;
   tags: string[];
   author: Schema.Types.ObjectId | IUser;
+  path: string;
+}
+
+export interface EditQuestionParams {
+  questionId: string;
+  title: string;
+  content: string;
   path: string;
 }
 
@@ -79,7 +97,7 @@ export interface AnswerVoteParams {
 
 export interface GetAnswersParams {
   questionId: string;
-  sortBy?: string;
+  filter?: string;
   page?: number;
   pageSize?: number;
 }
@@ -93,4 +111,55 @@ export interface ToggleSavedQuestionParams {
 export interface VieqQuestionParams {
   questionId: string;
   userId: string | undefined;
+}
+
+export interface GetQuestionsByTagParams {
+  tagId: string;
+  page?: number;
+  pageSize?: number;
+  searchQuery?: string;
+}
+
+export interface GetTagByIdParams {
+  tagId: string;
+}
+
+export interface GetQuestionsByUserIdParams {
+  userId: string;
+  page?: number;
+  pageSize?: number;
+  searchQuery?: string;
+}
+
+export interface GetAnswersByUserId {
+  userId: string;
+  page?: number;
+  pageSize?: number;
+  searchQuery?: string;
+}
+
+export interface GetUserStatsParams {
+  userId: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface DeleteQuestionParams {
+  questionId: string;
+  path: string;
+}
+
+export interface DeleteAnswerParams {
+  answerId: string;
+  path: string;
+}
+
+export interface GlobalSearchParams {
+  query?: string;
+  type?: string;
+}
+
+export interface SearchParams {
+  query?: string | null;
+  type?: string | null;
 }

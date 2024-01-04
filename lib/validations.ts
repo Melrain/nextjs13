@@ -9,3 +9,12 @@ export const QuestionsSchema = z.object({
 export const AnswerSchema = z.object({
   answer: z.string().min(20).max(10000)
 });
+
+export const ProfileSchema = z.object({
+  name: z.string().min(3).max(30),
+  username: z.string().min(3).max(30),
+  email: z.string().email(),
+  portfolioLink: z.string().min(0).max(100),
+  location: z.string().min(0).max(100),
+  bio: z.string().min(0).max(1000)
+});

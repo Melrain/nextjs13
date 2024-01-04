@@ -7,13 +7,19 @@ import NoResult from '@/components/shared/NoResult';
 import QuestionCard from '@/components/shared/cards/QuestionCard';
 import { getQuestions } from '@/lib/actions/question.action';
 import { HomePageFilters } from '@/constants/filters';
+import { SearchParamsProps } from '@/types';
+import PaginationPage from '@/components/shared/PaginationPage';
 
-export default async function Home() {
+export default async function Home({ searchParams }: SearchParamsProps) {
   // Get all questions from db;
-  const result = await getQuestions({});
+  const result = await getQuestions({
+    searchQuery: searchParams.q,
+    filter: searchParams.filter,
+    page: searchParams.page ? +searchParams.page : 1
+  });
 
   return (
-    <>
+    <div>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
         <h1 className="h1-bold text-dark100_light900">All Questions</h1>
         <Link
@@ -36,7 +42,7 @@ export default async function Home() {
           containerClasses="hidden max-sm:w-full max-md:flex"
         />
       </div>
-      <HomeFilters />
+      <HomeFilters route="/" />
       <div className="mt-10 flex w-full flex-col gap-6">
         {result && result.questions.length > 0 ? (
           result.questions.map((question) => (
@@ -46,7 +52,7 @@ export default async function Home() {
               title={question.title}
               tags={question.tags}
               author={question.author}
-              upvotes={question.upvotes.length}
+              upvotes={question.upvotes}
               views={question.views}
               answers={question.answers}
               createdAt={question.createdAt}
@@ -62,6 +68,10 @@ export default async function Home() {
           />
         )}
       </div>
-    </>
+      <PaginationPage
+        pageNumber={searchParams?.page ? +searchParams.page : 1}
+        isNext={result.isNext}
+      />
+    </div>
   );
 }

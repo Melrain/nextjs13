@@ -2,9 +2,30 @@
 
 import Question from '@/database/question.model';
 import { connectToDatabase } from '../mongoose';
-import { AnswerVoteParams, CreateAnswerParams, GetAnswersParams, QuestionVoteParams } from './shared.types';
+import {
+  AnswerVoteParams,
+  CreateAnswerParams,
+  DeleteAnswerParams,
+  GetAnswersByUserId,
+  GetAnswersParams
+} from './shared.types';
 import Answer from '@/database/answer.model';
 import { revalidatePath } from 'next/cache';
+import Interaction from '@/database/interaction.model';
+
+export async function getAnswersByUserId(params: GetAnswersByUserId) {
+  try {
+    await connectToDatabase();
+    const { userId } = params;
+    const answers = await Answer.find({ author: userId })
+      .populate({ path: 'author', select: '_id name picture' })
+      .sort({ createdAt: -1 });
+    return answers;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
 
 export async function createAnswer(params: CreateAnswerParams) {
   try {
@@ -35,10 +56,35 @@ export async function createAnswer(params: CreateAnswerParams) {
 export async function getAllAnswers(params: GetAnswersParams) {
   try {
     await connectToDatabase();
-    const { questionId } = params;
-    const answers = await Answer.find({ question: questionId }).populate('author');
+    const { questionId, filter, page = 1, pageSize = 2 } = params;
+    const skipAmount = (page - 1) * pageSize;
+    let sortOption = {};
 
-    return answers;
+    switch (filter) {
+      case 'highestUpvotes':
+        sortOption = { upvotes: -1 };
+        break;
+      case 'lowestUpvotes':
+        sortOption = { upvotes: 1 };
+        break;
+      case 'recent':
+        sortOption = { createdAt: -1 };
+        break;
+      case 'old':
+        sortOption = { createdAt: 1 };
+        break;
+      default:
+        break;
+    }
+
+    const answers = await Answer.find({ question: questionId })
+      .skip(skipAmount)
+      .limit(pageSize)
+      .sort(sortOption)
+      .populate('author');
+    const allAnswers = await Answer.find({ question: questionId }).countDocuments();
+    const isNext = allAnswers > skipAmount + answers.length;
+    return { answers, isNext };
   } catch (error) {
     console.error(error);
     throw error;
@@ -110,3 +156,18 @@ export async function upvoteAnswer(params: AnswerVoteParams) {
     throw error;
   }
 }
+
+export const deleteAnswer = async (params: DeleteAnswerParams) => {
+  try {
+    connectToDatabase();
+    const { answerId, path } = params;
+    const answer = await Answer.findOne({ question: answerId });
+    await Answer.deleteOne({ question: answerId });
+    await Question.updateMany({ _id: answer.question._id }, { $pull: { answers: answer._id } });
+    await Interaction.deleteMany({ question: answerId });
+    revalidatePath(path);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

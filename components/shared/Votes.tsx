@@ -43,7 +43,7 @@ const Votes = ({ type, itemId, userId, upvotes, downvotes, hasupVoted, hasdownVo
           userId: JSON.parse(userId),
           hasupVoted,
           hasdownVoted,
-          path: path
+          path
         });
       } else if (type === 'Answer') {
         await upvoteAnswer({
@@ -51,7 +51,7 @@ const Votes = ({ type, itemId, userId, upvotes, downvotes, hasupVoted, hasdownVo
           userId: JSON.parse(userId),
           hasupVoted,
           hasdownVoted,
-          path: path
+          path
         });
       }
 
@@ -66,7 +66,7 @@ const Votes = ({ type, itemId, userId, upvotes, downvotes, hasupVoted, hasdownVo
           userId: JSON.parse(userId),
           hasupVoted,
           hasdownVoted,
-          path: path
+          path
         });
       } else if (type === 'Answer') {
         await downvoteAnswer({
@@ -74,7 +74,7 @@ const Votes = ({ type, itemId, userId, upvotes, downvotes, hasupVoted, hasdownVo
           userId: JSON.parse(userId),
           hasupVoted,
           hasdownVoted,
-          path: path
+          path
         });
       }
 
@@ -83,12 +83,10 @@ const Votes = ({ type, itemId, userId, upvotes, downvotes, hasupVoted, hasdownVo
   };
 
   useEffect(() => {
-    if (itemId && userId && path && router) {
-      viewQuestion({
-        questionId: JSON.parse(itemId),
-        userId: JSON.parse(userId)
-      });
-    }
+    viewQuestion({
+      questionId: JSON.parse(itemId),
+      userId: userId ? JSON.parse(userId) : undefined
+    });
   }, [itemId, userId, path, router]);
 
   return (
@@ -125,7 +123,6 @@ const Votes = ({ type, itemId, userId, upvotes, downvotes, hasupVoted, hasdownVo
             src={`/assets/icons/${hasSaved ? 'star-filled.svg' : 'star-red.svg'}`}
             className="ml-2 cursor-pointer"
             onClick={() => {
-              console.log('saved button clicked');
               handleSave();
             }}
           />

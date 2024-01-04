@@ -11,31 +11,35 @@ import { QuestionsSchema } from '@/lib/validations';
 import { Editor } from '@tinymce/tinymce-react';
 import { Badge } from '../ui/badge';
 import Image from 'next/image';
-import { createQuestion } from '@/lib/actions/question.action';
-
+import { createQuestion, editQuestion } from '@/lib/actions/question.action';
+import { useToast } from '../ui/use-toast';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from '@/context/ThemeProvider';
 
-const type: any = 'create';
-
 interface Props {
   mongoUserId: string;
+  type?: string;
+  questionDetails?: string;
 }
 
-const Question = ({ mongoUserId }: Props) => {
+const Question = ({ mongoUserId, type, questionDetails }: Props) => {
+  const { toast } = useToast();
   const { mode } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const parsedQuestionDetails = questionDetails ? JSON.parse(questionDetails) : '';
+  const groupTags = parsedQuestionDetails ? parsedQuestionDetails.tags.map((tag: any) => tag.name) : [];
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
     defaultValues: {
-      title: '',
-      explanation: '',
-      tags: []
+      title: parsedQuestionDetails.title || '',
+      explanation: parsedQuestionDetails.content || '',
+      tags: groupTags || []
     }
   });
 
@@ -43,19 +47,38 @@ const Question = ({ mongoUserId }: Props) => {
   const onSubmit = async (values: z.infer<typeof QuestionsSchema>) => {
     // Do something with the form values
     // This will be type-safe and validated
-    console.log('clicked');
     setIsSubmitting(true);
     try {
       // make an async call to your API -> create a question
       // contain all form data
       // navigate to home page
-      await createQuestion({
-        title: values.title,
-        content: values.explanation,
-        tags: values.tags,
-        author: JSON.parse(mongoUserId),
-        path: pathname
-      });
+      if (type === 'edit') {
+        // edit question
+        await editQuestion({
+          questionId: parsedQuestionDetails._id,
+          title: values.title,
+          content: values.explanation,
+          path: pathname
+        });
+        toast({
+          title: `已修改问题：${values.title}`,
+          description: `${Date.now().toLocaleString()}`
+        });
+        router.push(`/question/${parsedQuestionDetails._id}`);
+      } else {
+        await createQuestion({
+          title: values.title,
+          content: values.explanation,
+          tags: values.tags,
+          author: JSON.parse(mongoUserId),
+          path: pathname
+        });
+        toast({
+          title: `已创建问题：${values.title}`,
+          description: `${Date.now().toLocaleString()}`
+        });
+      }
+
       router.push('/');
     } catch (error) {
       console.error(error);
@@ -137,7 +160,7 @@ const Question = ({ mongoUserId }: Props) => {
                   }
                   onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}
-                  initialValue=""
+                  initialValue={parsedQuestionDetails.content || ''}
                   init={{
                     height: 500,
                     menubar: false,

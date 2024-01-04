@@ -14,11 +14,13 @@ export async function viewQuestion(params: VieqQuestionParams) {
     await Question.findByIdAndUpdate(questionId, { $inc: { views: 1 } });
 
     // check if user has viewed this question before
-    const existingInteraction = await Interaction.findOne({ user: userId, action: 'view', question: questionId });
-    if (existingInteraction) return console.log('User has already viewed this question');
+    if (userId) {
+      const existingInteraction = await Interaction.findOne({ user: userId, action: 'view', question: questionId });
+      if (existingInteraction) return console.log('User has already viewed this question');
+      await Interaction.create({ user: userId, action: 'view', question: questionId });
+    }
 
     // create new interaction
-    await Interaction.create({ user: userId, action: 'view', question: questionId });
   } catch (error) {
     console.error(error);
     throw error;

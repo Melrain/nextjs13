@@ -5,8 +5,9 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { EyeIcon, MessageCircleIcon, ThumbsUpIcon } from 'lucide-react';
 import { getTimestamp } from '@/lib/utils';
+import EditDeleteAction from '../EditDeleteAction';
 
-interface QuestionProps {
+export interface QuestionProps {
   _id: string;
   title: string;
   tags: {
@@ -15,24 +16,47 @@ interface QuestionProps {
   }[];
   author: {
     _id: string;
+    clerkId: string;
     name: string;
     picture: string;
   };
-  upvotes: number;
+  upvotes: Array<object>;
   views: number;
   answers: Array<object>;
   createdAt: Date;
+  clerkId?: string;
+  type?: string;
 }
 
-const QuestionCard = ({ _id, title, tags, author, upvotes, views, answers, createdAt }: QuestionProps) => {
+const QuestionCard = ({
+  _id,
+  title,
+  tags,
+  author,
+  upvotes,
+  views,
+  answers,
+  createdAt,
+  clerkId,
+  type
+}: QuestionProps) => {
+  const showActionButtons = clerkId && clerkId === author.clerkId;
+
   return (
     <Card className="card-wrapper flex flex-col border-none p-8">
-      <CardTitle>
+      <CardTitle className="flex flex-row">
         <Link
           href={`/question/${_id}`}
           className="sm:h3-semibold text-dark200_light900 base-semibold line-clamp-1 flex-1">
           <h3>{title}</h3>
         </Link>
+
+        {showActionButtons && (
+          <EditDeleteAction
+            type={type || ''}
+            itemId={JSON.stringify(_id)}
+          />
+        )}
       </CardTitle>
       <CardContent className="p-0">
         <Link
@@ -63,7 +87,7 @@ const QuestionCard = ({ _id, title, tags, author, upvotes, views, answers, creat
             size={14}
             color="grey"
           />
-          <p className="text-xs">{upvotes} Votes</p>
+          <p className="text-xs">{upvotes.length} Votes</p>
           <MessageCircleIcon
             size={14}
             color="grey"

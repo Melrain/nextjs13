@@ -1,14 +1,19 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { sidebarLinks } from '@/constants';
-import { SignedIn, SignedOut } from '@clerk/nextjs';
+import { SignedIn, SignedOut, useAuth } from '@clerk/nextjs';
 import Link from 'next/link';
 import React from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 const LeftsideBar = () => {
+  const { userId } = useAuth();
   const pathname = usePathname();
+  const [isProfileActive, setIsProfileActive] = React.useState(false);
+  React.useEffect(() => {
+    setIsProfileActive(pathname.includes('profile'));
+  }, [pathname]);
   return (
     <section className="background-light900_dark200 light-border sticky left-0 top-0 flex h-screen flex-col justify-between overflow-y-auto border-r p-6 pt-36 shadow-light-300 dark:shadow-none max-sm:hidden lg:w-[266px]">
       <div className="flex flex-1 flex-col gap-6 ">
@@ -38,10 +43,12 @@ const LeftsideBar = () => {
             );
           })}
         <SignedIn>
-          <div className="p-4">
+          <div className="flex flex-1 flex-col gap-6">
             <Link
-              href={'/profile'}
-              className="flex flex-row items-center gap-2">
+              href={`/profile/${userId}`}
+              className={`${
+                isProfileActive ? 'primary-gradient rounded-lg text-light-900' : 'text-dark300_light900'
+              } flex items-center justify-start gap-4 bg-transparent p-4`}>
               <Image
                 src={'/assets/icons/user.svg'}
                 width={22}

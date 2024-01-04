@@ -2,27 +2,12 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Rendertag from './Rendertag';
+import Question from '@/database/question.model';
+import Tag from '@/database/tag.model';
 
-const hotQuestions = [
-  {
-    _id: 1,
-    title: 'Best Practices for data fetching in a Next.js application with Server-Side Rendering (SSR)'
-  },
-  { _id: 2, title: 'Can i get the course for free' },
-  { _id: 3, title: 'Redux Toolkit Not Updating State as Expected' },
-  { _id: 4, title: 'Async/Await Function Not Handling Errors Properly' },
-  { _id: 5, title: 'How do I use express as a custom server in NextJS' }
-];
-
-const popularTags = [
-  { _id: 1, name: 'NEXTJS', totalQuestions: 10 },
-  { _id: 2, name: 'NEXT JS', totalQuestions: 4 },
-  { _id: 3, name: 'REACT', totalQuestions: 4 },
-  { _id: 4, name: 'CSS', totalQuestions: 4 },
-  { _id: 5, name: 'JAVASCRIPT', totalQuestions: 3 }
-];
-
-const RightsideBar = () => {
+const RightsideBar = async () => {
+  const hotQuestions = await Question.find({}).sort({ views: -1 }).limit(5);
+  const popularTags = await Tag.find({}).sort({ questions: -1 }).limit(5);
   return (
     <section className="custom-scrollbar background-light900_dark200 sticky right-0  top-0 flex h-screen w-fit flex-col border-r p-6 pt-36 shadow-light-300 dark:shadow-none max-xl:hidden lg:w-[350px]">
       <div>
@@ -31,7 +16,7 @@ const RightsideBar = () => {
           {hotQuestions.map((question) => (
             <Link
               key={question._id}
-              href={`/questions/${question._id}`}
+              href={`/question/${question._id}`}
               className="flex cursor-pointer items-center justify-between gap-7">
               <p className="body-medium text-dark500_light700">{question.title}</p>
               <Image

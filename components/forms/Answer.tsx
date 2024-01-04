@@ -13,6 +13,7 @@ import { useTheme } from '@/context/ThemeProvider';
 
 import { createAnswer } from '@/lib/actions/answer.action';
 import { usePathname } from 'next/navigation';
+import { useToast } from '../ui/use-toast';
 
 const type: any = 'post';
 
@@ -23,6 +24,7 @@ interface AnswerProps {
 }
 
 const Answer = ({ question, questionId, authorId }: AnswerProps) => {
+  const { toast } = useToast();
   const { mode } = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const editorRef = useRef(null);
@@ -57,6 +59,10 @@ const Answer = ({ question, questionId, authorId }: AnswerProps) => {
       console.error(error);
     } finally {
       setIsSubmitting(false);
+      toast({
+        title: 'Answer posted',
+        description: 'Your answer has been posted successfully'
+      });
     }
   };
 

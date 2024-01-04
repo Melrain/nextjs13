@@ -6,9 +6,9 @@ export const HomePageFilters = [
 ];
 
 export const CommunityPageFilters = [
-  { name: 'Newest users', value: 'newest users' },
-  { name: 'Old Users', value: 'old users' },
-  { name: 'Top Contributors', value: 'top contributors' }
+  { name: 'Newest users', value: 'newestUsers' },
+  { name: 'Old Users', value: 'oldUsers' },
+  { name: 'Top Contributors', value: 'topContributors' }
 ];
 
 export const TagsPageFilters = [
@@ -23,4 +23,11 @@ export const AnswerFilters = [
   { name: 'Lowest Upvotes', value: 'lowestUpvotes' },
   { name: 'Most Recent', value: 'recent' },
   { name: 'Oldest', value: 'old' }
+];
+
+export const GlobalSearchFilters = [
+  { name: 'Question', value: 'question' },
+  { name: 'Answer', value: 'answer' },
+  { name: 'User', value: 'user' },
+  { name: 'Tag', value: 'tag' }
 ];
