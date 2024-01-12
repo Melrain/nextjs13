@@ -15,6 +15,8 @@ import { createAnswer } from '@/lib/actions/answer.action';
 import { usePathname } from 'next/navigation';
 import { useToast } from '../ui/use-toast';
 
+import axios from 'axios';
+
 const type: any = 'post';
 
 interface AnswerProps {
@@ -27,6 +29,7 @@ const Answer = ({ question, questionId, authorId }: AnswerProps) => {
   const { toast } = useToast();
   const { mode } = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmittingAI, setIsSubmittingAI] = useState(false);
   const editorRef = useRef(null);
   const pathname = usePathname();
 
@@ -66,12 +69,43 @@ const Answer = ({ question, questionId, authorId }: AnswerProps) => {
     }
   };
 
+  const handleSubmitAI = async () => {
+    if (!authorId) return;
+
+    setIsSubmittingAI(true);
+    try {
+      console.log('ai button clicked');
+      // TODO: make an api call use axios
+      const { data } = await axios.post('http://localhost:3000/api/chatgpt', {
+        question
+      });
+
+      if (editorRef.current) {
+        const editor = editorRef.current as any;
+        setTimeout(() => {
+          editor.setContent(data.choices[0].message.content);
+        }, 100); // 100ms 延迟调用 setContent()
+      }
+      console.log(data.choices[0].message.content);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      setIsSubmittingAI(false);
+    }
+  };
+
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(handleCeateAnswer)}>
         <FormItem className="flex flex-row items-center justify-between">
           <FormLabel className="text-dark300_light700 font-bold">Write your answer here</FormLabel>
-          <Button className="light-border-2 gap-2 rounded-lg bg-slate-100  text-primary-500 dark:bg-slate-900">
+          <Button
+            onClick={() => {
+              handleSubmitAI();
+            }}
+            disabled={isSubmittingAI}
+            className="light-border-2 gap-2 rounded-lg bg-slate-100  text-primary-500 dark:bg-slate-900">
             <Stars className="w-[15px]" /> Generate AI answer
           </Button>
         </FormItem>
@@ -83,14 +117,16 @@ const Answer = ({ question, questionId, authorId }: AnswerProps) => {
             <FormItem className="flex w-full flex-col">
               <FormControl className="mt-3.5">
                 <Editor
-                  apiKey={process.env.TINY_MCE_API_KEY}
+                  apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
                   onInit={(evt, editor) =>
                     // @ts-ignore
 
                     (editorRef.current = editor)
                   }
                   onBlur={field.onBlur}
-                  onEditorChange={(content) => field.onChange(content)}
+                  onEditorChange={(content) => {
+                    field.onChange(content);
+                  }}
                   initialValue=""
                   init={{
                     height: 500,

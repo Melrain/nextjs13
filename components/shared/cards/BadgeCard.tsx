@@ -18,7 +18,7 @@ const BadgeCard = ({ image, accquired, name }: BadgeCardProps) => {
       />
       <div className="flex flex-col">
         <p className="mt-2">{accquired}</p>
-        <p>{name} Badges</p>
+        <p>{name} 勋章</p>
       </div>
     </div>
   );

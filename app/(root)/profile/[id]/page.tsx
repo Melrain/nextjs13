@@ -18,8 +18,9 @@ const page = async ({ params, searchParams }: URLProps) => {
   if (!clerkId) {
     redirect('login');
   }
-
-  const user = await getUserById({ userId: params.id });
+  const result = await getUserById({ userId: params.id });
+  console.log(result.badgeCount);
+  const user = result.user;
   const questionsResult = await getQuestionsByUserId({ userId: user._id });
   const answers = await getUserAnswers({ userId: user._id });
 
@@ -71,18 +72,18 @@ const page = async ({ params, searchParams }: URLProps) => {
           </div>
           <BadgeCard
             image="/assets/icons/gold-medal.svg"
-            accquired={0}
-            name="Gold"
+            accquired={result.badgeCount.gold}
+            name="黄金"
           />
           <BadgeCard
             image="/assets/icons/silver-medal.svg"
-            accquired={0}
-            name="Gold"
+            accquired={result.badgeCount.silver}
+            name="白银"
           />
           <BadgeCard
             image="/assets/icons/bronze-medal.svg"
-            accquired={0}
-            name="Gold"
+            accquired={result.badgeCount.bronze}
+            name="黄铜"
           />
         </div>
       </div>

@@ -240,7 +240,7 @@ export async function createQuestion(params: CreateQuestionParams) {
     // Create an interaction record for the user's ask_question action
 
     // Increment author's reputation by 5
-
+    await User.findByIdAndUpdate(author, { $inc: { reputation: 5 } });
     // 重新刷新页面
     revalidatePath(path);
   } catch (error) {
@@ -256,15 +256,21 @@ export const downvoteQuestion = async (params: QuestionVoteParams) => {
     if (hasdownVoted) {
       updateQuery = { $pull: { downvotes: userId } };
     } else if (hasupVoted) {
-      updateQuery = { $pull: { upvotes: userId }, $push: { downvotes: userId } };
+      updateQuery = { $pull: { upvotes: userId }, $addToSet: { downvotes: userId } };
     } else {
-      updateQuery = { $push: { downvotes: userId } };
+      updateQuery = { $addToSet: { downvotes: userId } };
     }
     const question = await Question.findOneAndUpdate({ _id: questionId }, updateQuery, { new: true });
 
     if (!question) {
       throw new Error('Question not found');
     }
+
+    // decrease author's reputation by 2 if they downvote a question for first time
+    // decrease user's reputation by 1 if they downvote a question for first time
+    await User.findByIdAndUpdate(question.author, { $inc: { reputation: hasdownVoted ? 10 : -10 } });
+    await User.findByIdAndUpdate(userId, { $inc: { reputation: hasdownVoted ? 1 : -1 } });
+
     revalidatePath(path);
   } catch (error) {
     console.error(error);
@@ -278,17 +284,22 @@ export const upvoteQuestion = async (params: QuestionVoteParams) => {
     const { questionId, userId, hasdownVoted, hasupVoted, path } = params;
     let updateQuery = {};
     if (hasupVoted) {
-      updateQuery = { $pull: { upvotes: userId } };
+      updateQuery = { $addToSet: { upvotes: userId } };
     } else if (hasdownVoted) {
-      updateQuery = { $pull: { downvotes: userId }, $push: { upvotes: userId } };
+      updateQuery = { $pull: { downvotes: userId }, $addToSet: { upvotes: userId } };
     } else {
-      updateQuery = { $push: { upvotes: userId } };
+      updateQuery = { $addToSet: { upvotes: userId } };
     }
     const question = await Question.findOneAndUpdate({ _id: questionId }, updateQuery, { new: true });
 
     if (!question) {
       throw new Error('Question not found');
     }
+    // increase author's reputation by 10,if they upvote a question for first time
+    // increase user's reputation by 1 if they upvote a question for first time
+    await User.findByIdAndUpdate(question.author, { $inc: { reputation: hasupVoted ? -10 : 10 } });
+    await User.findByIdAndUpdate(userId, { $inc: { reputation: hasupVoted ? -1 : 1 } });
+
     revalidatePath(path);
   } catch (error) {
     console.error(error);
@@ -299,7 +310,12 @@ export const upvoteQuestion = async (params: QuestionVoteParams) => {
 export const deleteQuestion = async (params: DeleteQuestionParams) => {
   try {
     await connectToDatabase();
+
     const { questionId, path } = params;
+
+    // decrease author's reputation by 5
+    await User.findOneAndUpdate({ questions: questionId }, { $inc: { reputation: -5 } });
+
     await Question.findByIdAndDelete({ _id: questionId });
     await Answer.deleteMany({ question: questionId });
     await Interaction.deleteMany({ question: questionId });

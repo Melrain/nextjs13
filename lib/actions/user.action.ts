@@ -76,7 +76,29 @@ export async function getUserById(params: GetUserByIdParams) {
       }
     });
 
-    return user;
+    const badgeCount = { gold: 0, silver: 0, bronze: 0 };
+
+    // get user's created questions length, 3 question = 1 bronze badge
+    const userQuestions = await Question.find({ author: user._id });
+    const userQuestionsLength = userQuestions.length;
+    badgeCount.bronze = Math.floor(userQuestionsLength / 2);
+
+    // get user's questions total upvoted length, 2 upvotes = 1 silver badge
+    let totalQuestionUpvotes = 0;
+    userQuestions.forEach((question) => {
+      totalQuestionUpvotes += question.upvotes.length;
+    });
+    badgeCount.silver = Math.floor(totalQuestionUpvotes / 2);
+
+    // get user's total upvoted answers length, 2 upvotes = 1 gold badge
+    let totalAnswerUpvotes = 0;
+    const userAnswers = await Answer.find({ author: user._id });
+    userAnswers.forEach((answer) => {
+      totalAnswerUpvotes += answer.upvotes.length;
+    });
+    badgeCount.gold = Math.floor(totalAnswerUpvotes / 2);
+
+    return { user, badgeCount };
   } catch (error) {
     console.error(error);
     throw error;

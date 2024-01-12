@@ -33,7 +33,6 @@ const GlobalSearch = () => {
   }, [pathname]);
 
   // 搜索框输入时，更新url
-  useEffect(() => {});
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (search) {

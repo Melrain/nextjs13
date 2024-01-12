@@ -11,17 +11,17 @@ interface Props {
 
 const page = async ({ params }: Props) => {
   const { userId } = auth();
-  const question = await getQuestionById({ questionId: params.itemId });
+  const result = await getQuestionById({ questionId: params.itemId });
 
   if (!userId) return <div>请先登录</div>;
-  if (userId !== question.author.clerkId) {
+  if (userId !== result.question.author.clerkId) {
     return <div>你不是这个问题的作者,无权修改！</div>;
   }
 
   return (
     <div>
       <Question
-        questionDetails={JSON.stringify(question)}
+        questionDetails={JSON.stringify(result.question)}
         mongoUserId={userId}
         type="edit"
       />
