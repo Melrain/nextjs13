@@ -31,7 +31,7 @@ const page = async ({ params, searchParams }: URLProps) => {
           <div>
             <Image
               src={user.picture}
-              alt=""
+              alt={user._id}
               width={150}
               height={150}
               className="aspect-square rounded-full"
