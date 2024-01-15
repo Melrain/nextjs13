@@ -12,6 +12,7 @@ import PaginationPage from '@/components/shared/PaginationPage';
 
 export default async function Home({ searchParams }: SearchParamsProps) {
   // Get all questions from db;
+
   const result = await getQuestions({
     searchQuery: searchParams.q,
     filter: searchParams.filter,
