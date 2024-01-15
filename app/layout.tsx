@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   title: 'DevFlow',
   description: '这是一个正在学习制作的网站, 由next.js 13.5 作为技术栈, 该网站会与区块链交互, 并拥有自己的智能合约',
   icons: {
-    icon: '/assets/images/site-logo.svg'
+    icon: '/public/assets/images/site-logo.svg'
   }
 };
 
