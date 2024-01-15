@@ -20,10 +20,38 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: 'DevFlow',
-  description: '这是一个正在学习制作的网站, 由next.js 13.5 作为技术栈, 该网站会与区块链交互, 并拥有自己的智能合约',
-  icons: {
-    icon: '/public/assets/images/site-logo.svg'
+  metadataBase: new URL('https://leerob.io'),
+  title: {
+    default: 'Lee Robinson',
+    template: '%s | Lee Robinson'
+  },
+  description: 'Developer, writer, and creator.',
+  openGraph: {
+    title: 'Lee Robinson',
+    description: 'Developer, writer, and creator.',
+    url: 'https://leerob.io',
+    siteName: 'Lee Robinson',
+    locale: 'en_US',
+    type: 'website'
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1
+    }
+  },
+  twitter: {
+    title: 'Lee Robinson',
+    card: 'summary_large_image'
+  },
+  verification: {
+    google: 'eZSdmzAXlLkKhNJzfgwDqWORghxnJ8qR9_CHdAh5-xw',
+    yandex: '14d2e73487fa6c71'
   }
 };
 
